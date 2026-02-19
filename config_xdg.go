@@ -1,3 +1,4 @@
+//go:build !windows && !darwin
 // +build !windows,!darwin
 
 package configdir
@@ -12,6 +13,7 @@ var (
 	systemConfig []string
 	localConfig  string
 	localCache   string
+	localState   string
 )
 
 func findPaths() {
@@ -34,5 +36,12 @@ func findPaths() {
 		localCache = os.Getenv("XDG_CACHE_HOME")
 	} else {
 		localCache = filepath.Join(os.Getenv("HOME"), ".cache")
+	}
+
+	// Local user state.
+	if os.Getenv("XDG_STATE_HOME") != "" {
+		localState = os.Getenv("XDG_STATE_HOME")
+	} else {
+		localState = filepath.Join(os.Getenv("HOME"), ".local/state")
 	}
 }
