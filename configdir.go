@@ -58,6 +58,18 @@ func LocalCache(folder ...string) string {
 	return filepath.Join(localCache, filepath.Join(folder...))
 }
 
+// LocalState returns the local user state folder, with optional path
+// components added to the end for vendor/application-specific settings.
+// NOTE: On some platforms, this may point to the same location
+// as either LocalConfig or LocalCache, depending on the platform's conventions.
+func LocalState(folder ...string) string {
+	if len(folder) == 0 {
+		return localState
+	}
+
+	return filepath.Join(localState, filepath.Join(folder...))
+}
+
 // DefaultFileMode controls the default permissions on any paths created by
 // using MakePath.
 var DefaultFileMode = os.FileMode(0755)
