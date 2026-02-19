@@ -17,6 +17,7 @@ func reset() {
 	os.Setenv("XDG_CONFIG_DIRS", "")
 	os.Setenv("XDG_CONFIG_HOME", "")
 	os.Setenv("XDG_CACHE_HOME", "")
+	os.Setenv("XDG_STATE_HOME", "")
 	configdir.Refresh()
 }
 
@@ -84,8 +85,10 @@ func testLocalCommon(t *testing.T, pathType, defaultPrefix, customPrefix string)
 		if test.Refresh {
 			if pathType == "config" {
 				os.Setenv("XDG_CONFIG_HOME", test.Env)
-			} else {
+			} else if pathType == "cache" {
 				os.Setenv("XDG_CACHE_HOME", test.Env)
+			} else {
+				os.Setenv("XDG_STATE_HOME", test.Env)
 			}
 			configdir.Refresh()
 		}
@@ -93,8 +96,10 @@ func testLocalCommon(t *testing.T, pathType, defaultPrefix, customPrefix string)
 		var result string
 		if pathType == "config" {
 			result = configdir.LocalConfig(test.Paths...)
-		} else {
+		} else if pathType == "cache" {
 			result = configdir.LocalCache(test.Paths...)
+		} else {
+			result = configdir.LocalState(test.Paths...)
 		}
 
 		if result != test.Values[0] {
@@ -182,4 +187,8 @@ func TestLocalConfig(t *testing.T) {
 
 func TestLocalCache(t *testing.T) {
 	testLocalCommon(t, "cache", "/home/user/.cache", "/tmp/cache")
+}
+
+func TestLocalState(t *testing.T) {
+	testLocalCommon(t, "state", "/home/user/.local/state", "/tmp/state")
 }
